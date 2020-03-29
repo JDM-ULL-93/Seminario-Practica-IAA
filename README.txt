@@ -7,8 +7,6 @@
      Tested on Ubuntu 11.0 and Centos 6.2
      Compiled with gcc 4.4.6 (32bit) and 4.5.2 (64bit).
 
-PRUEBA 
-
 FILES INCLUDED
 --------------
 
