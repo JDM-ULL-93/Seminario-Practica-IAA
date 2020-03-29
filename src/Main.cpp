@@ -23,10 +23,13 @@ extern environ_ns *env;
 
 int main (void){
         net_bn *net;
-        node_bn *Estado_Actual, *Health, *Weapons, *OpponentWeapons, *HearSound, *NumberEnemies, *ProximateWeapons, *ProximateHealing, *Estado_Futuro;
+        const nodelist_bn* orig_nodes;
+	int numnodes;
         double belief;
-        char mesg[MESG_LEN_ns];
-        int res;
+	stream_ns* casefile;
+	char mesg[MESG_LEN_ns];
+	int i, res;
+	report_ns* err;
 
         printf ("\nWelcome to Netica API!\n");
         printf ("This demo project is from the first 2 examples of the Reference Manual.\n");
@@ -41,118 +44,68 @@ int main (void){
         printf ("%s\n", mesg);
         if (res < 0)  return -1;
 
-        net = NewNet_bn("BotCasual", env);
-		        CHKERR
+        //Cargas la red
 
-        Estado_Actual = NewNode_bn("St",6,net);
-	SetNodeStateNames_bn (Estado_Actual, "Atacar","Recoger_Armas","Recoger_Energia","Explorar","Huir","Detectar_Peligro");
+        net = ReadNet_bn ( NewFileStream_ns ("BotCasual.neta", env, NULL), NO_VISUAL_INFO);
+	orig_nodes = GetNetNodes_bn (net);
+        int saved = SetNetAutoUpdate_bn (net, 0); 
 	CHKERR
-
-	Health = NewNode_bn("H",2,net);
-	SetNodeStateNames_bn (Health,"Alta","Baja");
-	CHKERR
-
-	Weapons = NewNode_bn("W",2,net);
-	SetNodeStateNames_bn(Weapons,"Armado","Desarmado");
-	CHKERR
-
-	OpponentWeapons = NewNode_bn("OW",2,net);
-	SetNodeStateNames_bn(OpponentWeapons,"Armado","Desarmado");
-	CHKERR
-
-	HearSound = NewNode_bn("HN",2,net);
-	SetNodeStateNames_bn(HearSound,"Si","No");
-	CHKERR
-
-	NumberEnemies = NewNode_bn("NE",2,net);
-	SetNodeStateNames_bn (NumberEnemies,"Si","No");
-	CHKERR
-
-	ProximateWeapons = NewNode_bn("PW",2,net);
-	SetNodeStateNames_bn (ProximateWeaposn,"Si","No");
-	CHKERR
-
-	ProximateHealing = NewNode_bn("PH",2,net);
-	SetNodeStateNames_bn (ProximateHealing,"Si","No");
-        CHKERR
-
-	Estado_Futuro = NewNode_bn("St1",6,net);
-        SetNodeStateNames_bn (Estado_Futuro, "Atacar","Recoger_Armas","Recoger_Energia","Explorar","Huir","Detectar_Peligro");
-        CHKERR
-
-
-        /* SetNodeTitle_bn (TbOrCa, "Tuberculosis or Cancer");
-        SetNodeTitle_bn (Cancer, "Lung Cancer");
-        CHKERR*/
-        *Estado_Actual, *Health, *Weapons, *OpponentWeapons, *HearSound, *NumberEnemies, *ProximateWeapons, *ProximateHealing, *Estado_Futuro
-
-        //AddLink_bn (VisitAsia, Tuberculosis);
-	AddLink_bn(Estado_Actual, Estado_Futuro);
-	AddLink_bn(Health, Estado_Futuro)
-        AddLink_bn(Weapons, Estado_Futuro);
-        AddLink_bn(OpponentWeapons, Estado_Futuro);
-        AddLink_bn(HearSound, Estado_Futuro);
-        AddLink_bn(NumberEnemies, Estado_Futuro);
-        AddLink_bn(ProximateWeapons, Estado_Futuro);
-        AddLink_bn(ProximateHealing, Estado_Futuro);
-        CHKERR
-	//Hasta aqui
-        SetNodeProbs(Estado_Actual, "Atacar", 19.31 );
-        SetNodeProbs(Estado_Actual, "Recoger_Armas", 21.045 );
-        SetNodeProbs(Estado_Actual, "Recoger_Energia", 8.826  );
-        SetNodeProbs(Estado_Actual, "Explorar", 7.318  );
-        SetNodeProbs(Estado_Actual, "Huir", 22.632  );
-        SetNodeProbs(Estado_Actual, "Detectar_Peligro", 20.869  );
-
-        SetNodeProbs(Health, "Alta", 37.969);
-        SetNodeProbs(Health, "Baja", 62.031);
-
-        SetNodeProbs(Weapons, "Armado", 35.966);
-        SetNodeProbs(Weapons, "Desarmado", 64.034);
-
-        SetNodeProbs(OpponentWeapons, "Armado", );
-        SetNodeProbs(OpponentWeapons, "Desarmado", );
-
-        //                   Tuberculosis Cancer
-        SetNodeProbs(HearSound, "Si", );
-        SetNodeProbs(HearSound, "No",  );
-
-        SetNodeProbs(NumberEnemies, "Si",  );
-        SetNodeProbs(NumberEnemies, "No",  );
-
-        SetNodeProbs(ProximateWeapons, "Si",  );
-        SetNodeProbs(ProximateWeapons, "No",  );
-
-        SetNodeProbs(ProximateHealing, "Si",  );
-        SetNodeProbs(ProximateHealing, "No",  );
-
-       
-
         
-        //                  TbOrCa  Abnormal Normal
-        SetNodeProbs (Estado_Futuro, "Atacar","Recoger_Armas","Recoger_Energia","Explorar","Huir","Detectar_Peligro",   );
-        
-       CompileNet_bn (net);
+        numnodes = LengthNodeList_bn (orig_nodes);
+
+        CompileNet_bn (net);
         CHKERR
 
-        belief = GetNodeBelief ("Tuberculosis", "present", net);
+        /*for (i = 0;  i < numnodes;  ++i)
+                printf ("%s", GetNodeName_bn (NthNode_bn (orig_nodes, i)));
+	CHKERR*/
+
+        /////  ************* EJEMPLOS ********************* ///////
+        printf("*********************TEST*********************\n\n");
+
+        printf("-----------------PRIMER EJEMPLO-----------------\n\n");
+
+        EnterFinding ("St", "Atacar", net);
         CHKERR
 
-        printf ("The probability of tuberculosis is %g\n\n", belief);
-
-        EnterFinding ("XRay", "abnormal", net);
-        belief = GetNodeBelief ("Tuberculosis", "present", net);
+        EnterFinding ("OW", "Armado", net);
+        belief = GetNodeBelief ("St1", "Atacar", net);
         CHKERR
 
-        printf ("Given an abnormal X-ray, \n\
-         the probability of tuberculosis is %g\n\n", belief);
+        printf ("P(St1 = Atacar | St = Atacar , H,W, Ow = Armado, HN,NE,PW,PH) =  %g\n\n", belief);
 
-        EnterFinding ("VisitAsia", "visit", net);
-        belief = GetNodeBelief ("Tuberculosis", "present", net);
+        SetNetAutoUpdate_bn (net, saved); 
+
+        RetractNodeFindings_bn(NthNode_bn(orig_nodes, 0));
+        RetractNodeFindings_bn(NthNode_bn(orig_nodes, 3));
+
+        printf("-----------------SEGUNDO EJEMPLO-----------------\n\n");
+
+        EnterFinding ("W", "Desarmado", net);
+        EnterFinding ("H", "Alto", net);
         CHKERR
 
-        printf ("Given an abnormal X-ray and a visit to Asia, \n\
-             the probability of tuberculosis is %g\n\n", belief);
+        EnterFinding ("PW", "No", net);
+        belief = GetNodeBelief ("St1", "Explorar", net);
+        CHKERR
+
+        printf ("P(St1 = Explorar| St, H = Alto,W= Desarmado, Ow , HN,NE,PW = No,PH) = %g\n\n", belief);
+
+        RetractNodeFindings_bn(NthNode_bn(orig_nodes, 2));
+        RetractNodeFindings_bn(NthNode_bn(orig_nodes, 1));
+        RetractNodeFindings_bn(NthNode_bn(orig_nodes, 6));
+
+        printf("-----------------TERCER EJEMPLO-----------------\n\n");
+
+        EnterFinding ("HN", "Si", net);
+        CHKERR
+
+        EnterFinding ("PH", "Si", net);
+        belief = GetNodeBelief ("St1", "Huir", net);
+        CHKERR
+
+        printf ("P(St1 = Huir | St, H, W, OW, HN = Si, NE, PW, PH = Si ) = %g\n\n", belief);
+
 end:
         DeleteNet_bn (net);
         res = CloseNetica_bn (env, mesg);
