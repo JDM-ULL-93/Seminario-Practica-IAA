@@ -55,7 +55,7 @@ end:
 	DeleteNet_bn (orig_net);
 	res= CloseNetica_bn (env, mesg);
 	printf ("%s\n", mesg);
-	printf ("Press <enter> key to quit ", mesg);
+	printf ("Press <enter> key to quit ");
 	getchar();
 	return (res < 0 ? -1 : 0);
 
