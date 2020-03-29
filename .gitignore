@@ -1,0 +1,10 @@
+*.o
+examples_c/BuildNet
+examples_c/ClassifyData
+examples_c/Demo
+examples_c/DoInference
+examples_c/LearnCPTs
+examples_c/LearnLatent
+examples_c/MakeDecision
+examples_c/NetTester
+examples_c/SimulateCases
