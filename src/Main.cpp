@@ -41,34 +41,59 @@ int main (void){
         printf ("%s\n", mesg);
         if (res < 0)  return -1;
 
-        net = NewNet_bn ("ChestClinic", env);
+        net = NewNet_bn ("BotCasual", env);
 		        CHKERR
 
-        VisitAsia =    NewNode_bn ("VisitAsia", 2, net);
-        Tuberculosis = NewNode_bn ("Tuberculosis", 2, net);
-        Smoking =      NewNode_bn ("Smoking", 2, net);
-        Cancer =       NewNode_bn ("Cancer", 2, net);
-        TbOrCa =       NewNode_bn ("TbOrCa", 2, net);
-        XRay =         NewNode_bn ("XRay", 2, net);
+        Estado_Actual = NewNode_bn("St",6,net);
+	SetNodeStateNames_bn (Estado_Actual, "Atacar","Recoger_Armas","Recoger_Energia","Explorar","Huir","Detectar_Peligro");
+	CHKERR
+
+	Health = NewNode_bn("H",2,net);
+	SetNodeStateNames_bn (Health,"Alta","Baja");
+	CHKERR
+
+	Weapons = NewNode_bn("W",2,net);
+	SetNodeStateNames_bn(Weapons,"Armado","Desarmado");
+	CHKERR
+
+	OpponentWeapons = NewNode_bn("OW",2,net);
+	SetNodeStateNames_bn(OpponentWeapons,"Armado","Desarmado");
+	CHKERR
+
+	HearSound = NewNode_bn("HN",2,net);
+	SetNodeStateNames_bn(HearSound,"Si","No");
+	CHKERR
+
+	NumberEnemies = NewNode_bn("NE",2,net);
+	SetNodeStateNames_bn (NumberEnemies,"Si","No");
+	CHKERR
+
+	ProximateWeapons = NewNode_bn("PW",2,net);
+	SetNodeStateNames_bn (ProximateWeaposn,"Si","No");
+	CHKERR
+
+	ProximateHealing = NewNode_bn("PH",2,net);
+	SetNodeStateNames_bn (ProximateHealing,"Si","No");
         CHKERR
 
-        SetNodeStateNames_bn (VisitAsia,   "visit,   no_visit");
-        SetNodeStateNames_bn (Tuberculosis,"present, absent");
-        SetNodeStateNames_bn (Smoking,     "smoker,  nonsmoker");
-        SetNodeStateNames_bn (Cancer,      "present, absent");
-        SetNodeStateNames_bn (TbOrCa,      "true,    false");
-        SetNodeStateNames_bn (XRay,        "abnormal,normal");
-        SetNodeTitle_bn (TbOrCa, "Tuberculosis or Cancer");
+	Estado_Futuro = NewNode_bn("St1",6,net);
+        SetNodeStateNames_bn (Estado_Futuro, "Atacar","Recoger_Armas","Recoger_Energia","Explorar","Huir","Detectar_Peligro");
+        CHKERR
+
+
+        /* SetNodeTitle_bn (TbOrCa, "Tuberculosis or Cancer");
         SetNodeTitle_bn (Cancer, "Lung Cancer");
-        CHKERR
+        CHKERR*/
 
-        AddLink_bn (VisitAsia, Tuberculosis);
+        //AddLink_bn (VisitAsia, Tuberculosis);
+	AddLink_bn(Estado_Actual, Estado_Futuro);
+	AddLink_bn(Health,)
         AddLink_bn (Smoking, Cancer);
         AddLink_bn (Tuberculosis, TbOrCa);
         AddLink_bn (Cancer, TbOrCa);
         AddLink_bn (TbOrCa, XRay);
         CHKERR
-
+	//Hasta aqui
         SetNodeProbs (VisitAsia, 0.01, 0.99);
 
         SetNodeProbs (Tuberculosis, "visit",    0.05, 0.95);
