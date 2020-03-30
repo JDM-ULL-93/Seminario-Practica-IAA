@@ -1,4 +1,7 @@
+--> GUÍA DE USO DEL PROGRAMA.
 
+	1º Dentro de src ./compile.sh
+	2º Dentro de src ./Main.a
 
               Netica API Programmer's Library, version 5.04      2012-01-21
               ---------------------------------------------
